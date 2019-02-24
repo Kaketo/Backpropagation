@@ -161,12 +161,10 @@ def sigmoid_prime(z):
     return sigmoid(z)*(1-sigmoid(z))
 
 ### TESTY
-# Load data
+# Simple linear classification
 simple = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.simple.test.100.csv')
 simple_np = np.array(simple[['x','y']])
 simple_np_ans = np.array(simple['cls'])
-
-
 brain = Network([2,2,1],sigmoid,sigmoid_prime,200,0.01,0.1,'classification')
 errors = brain.train_and_evaluate(simple_np,simple_np_ans-1)
 brain.feedforward(simple_np[0])
@@ -177,6 +175,31 @@ plt.plot(errors[0])
 plt.plot(errors[1])
 plt.legend(['training set error', 'test set error'], loc='upper left')
 plt.show()
+
+# Noisy classification
+noisy = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.XOR.test.500.csv')
+noisy_np = np.array(noisy[['x','y']])
+noisy_np_ans = np.array(noisy['cls'])
+brain = Network([2,2,2,1],sigmoid,sigmoid_prime,10000,0.0001,0.001,'classification')
+errors = brain.train_and_evaluate(noisy_np,noisy_np_ans-1)
+brain.feedforward(noisy_np[0])
+noisy_np_ans[0] - 1
+brain.feedforward(noisy_np[1])
+noisy_np_ans[1] - 1
+plt.plot(errors[0])
+plt.plot(errors[1])
+plt.legend(['training set error', 'test set error'], loc='upper left')
+plt.show()
+
+# Simple linear regression
+lin_reg = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Regression/data.square.test.500.csv')
+lin_reg_np = np.array(lin_reg[['x']])
+lin_reg_np_ans = np.array(lin_reg[['y']])
+brain = Network([1,3,1],sigmoid,sigmoid_prime,1000,0.01,0.1,'regression')
+errors = brain.train_and_evaluate(lin_reg_np,lin_reg_np_ans)
+
+
+
 
 
 
