@@ -3,6 +3,8 @@ import pandas as pd
 import random
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import LabelEncoder
 
 class Network():
 
@@ -104,8 +106,10 @@ class Network():
             gradient_biases[-i] = delta
             gradient_weights[-i] = np.dot(delta, activations[-i-1].transpose())
         return [gradient_biases, gradient_weights]
+
     
-    def train_once(self, x, y, x_test, y_test):
+    
+    def train_once_classification(self, x, y, x_test, y_test):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a training data set.
         Arguments:
@@ -130,25 +134,25 @@ class Network():
                 prev_delta_gradient_biases[k] = - self.learning_rate * gradient_biases[k] + self.momentum_rate * prev_delta_gradient_biases[k]
         
         # Calculate error of training and test set
-        train_predictions = np.zeros(y.shape[0])
-        test_predictions = np.zeros(y_test.shape[0])
+        train_predictions = np.zeros([y.shape[0],y.shape[1]])
+        test_predictions = np.zeros([y_test.shape[0], y_test.shape[1]])
         for m in range(len(x)):
-            train_predictions[m] = self.feedforward(x[m])
+            train_predictions[m] = self.feedforward(x[m]).transpose()
         for n in range(len(x_test)):
-            test_predictions[n] = self.feedforward(x_test[n])
+            test_predictions[n] = self.feedforward(x_test[n]).transpose()
 
         # Return error  
-        return [sum(abs(y - train_predictions)) / len(x), sum(abs(y_test - test_predictions)) / len(x_test)]
+        return [sum(sum(abs(y - train_predictions))) / (len(x) * y.shape[1]), sum(sum(abs(y_test - test_predictions))) / (len(x_test)*y.shape[1])]
 
     
-    def train_and_evaluate(self, x, y):
-        train_features, test_features, train_labels, test_labels = train_test_split(x, y, test_size = 0.20, random_state = 0)
+    def train_and_evaluate(self, x, y, x_test, y_test):
+        #train_features, test_features, train_labels, test_labels = train_test_split(x, y, test_size = 0.20, random_state = 0)
         
         training_set_error = np.zeros(self.iterations)
         test_set_error = np.zeros(self.iterations)
         # Network training and errors calculation
         for i in range(self.iterations):
-            [training_set_error[i], test_set_error[i]] = self.train_once(train_features, train_labels, test_features, test_labels)
+            [training_set_error[i], test_set_error[i]] = self.train_once_classification(x, y, x_test, y_test)
         return [training_set_error, test_set_error]
 
         
@@ -160,64 +164,36 @@ def sigmoid(z):
 def sigmoid_prime(z):
     return sigmoid(z)*(1-sigmoid(z))
 
+def data_read_classification(name,size):
+    train = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.'+name+'.train.'+str(size)+'.csv')
+    test = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.'+name+'.test.'+str(size)+'.csv')
+    train_features = np.array(train[['x','y']])
+    train_labels = np.array(train['cls'])
+    test_features = np.array(test[['x','y']])
+    test_labels = np.array(test['cls'])
+
+    # One Hot Encoder
+    label_encoder = LabelEncoder()
+    onehot_encoder = OneHotEncoder(sparse=False)
+
+    train_labels_encoded = label_encoder.fit_transform(train_labels)
+    train_labels_encoded = train_labels_encoded.reshape(len(train_labels_encoded), 1)
+    train_labels_encoded = onehot_encoder.fit_transform(train_labels_encoded)
+
+    test_labels_encoded = label_encoder.fit_transform(test_labels)
+    test_labels_encoded = test_labels_encoded.reshape(len(test_labels_encoded), 1)
+    test_labels_encoded = onehot_encoder.fit_transform(test_labels_encoded)
+
+    return [train_features, train_labels_encoded, test_features, test_labels_encoded]
+
 ### TESTY
-# Simple linear classification
-simple = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.simple.test.100.csv')
-simple_np = np.array(simple[['x','y']])
-simple_np_ans = np.array(simple['cls'])
-brain = Network([2,2,1],sigmoid,sigmoid_prime,200,0.01,0.1,'classification')
-errors = brain.train_and_evaluate(simple_np,simple_np_ans-1)
-brain.feedforward(simple_np[0])
-simple_np_ans[0] - 1
-brain.feedforward(simple_np[1])
-simple_np_ans[1] - 1
+# Classification
+dt = data_read_classification('circles',100)
+
+brain = Network([2,2,5,4],sigmoid,sigmoid_prime,1000,0.0001,0.001,'classification')
+
+errors = brain.train_and_evaluate(dt[0],dt[1],dt[2],dt[3])
 plt.plot(errors[0])
 plt.plot(errors[1])
 plt.legend(['training set error', 'test set error'], loc='upper left')
 plt.show()
-
-# Noisy classification
-noisy = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.XOR.test.500.csv')
-noisy_np = np.array(noisy[['x','y']])
-noisy_np_ans = np.array(noisy['cls'])
-brain = Network([2,2,2,1],sigmoid,sigmoid_prime,10000,0.0001,0.001,'classification')
-errors = brain.train_and_evaluate(noisy_np,noisy_np_ans-1)
-brain.feedforward(noisy_np[0])
-noisy_np_ans[0] - 1
-brain.feedforward(noisy_np[1])
-noisy_np_ans[1] - 1
-plt.plot(errors[0])
-plt.plot(errors[1])
-plt.legend(['training set error', 'test set error'], loc='upper left')
-plt.show()
-
-# Simple linear regression
-lin_reg = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Regression/data.square.test.500.csv')
-lin_reg_np = np.array(lin_reg[['x']])
-lin_reg_np_ans = np.array(lin_reg[['y']])
-brain = Network([1,3,1],sigmoid,sigmoid_prime,1000,0.01,0.1,'regression')
-errors = brain.train_and_evaluate(lin_reg_np,lin_reg_np_ans)
-
-
-
-
-
-
-# brain.feedforward([1,1])
-# brain.feedforward([0,0])
-# brain.weights
-# brain.biases
-
-
-# Test for XOR
-xor = Network([2,2,1],sigmoid,sigmoid_prime,1000,0.1,0.1,'classification')
-errors = xor.train_and_evaluate(np.array([[0,1],[1,0],[1,1],[0,0]]), np.array([[1],[1],[0],[0]]))
-plt.plot(errors)
-plt.show()
-
-xor.feedforward([0,1])
-xor.feedforward([1,0])
-xor.feedforward([1,1])
-xor.feedforward([0,0])
-xor.weights
-xor.biases
