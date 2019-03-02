@@ -43,12 +43,11 @@ def data_read_regression(name,size):
 
 
 ### Regression
-x = data_read_regression('multimodal',1000)
-brain=Network(learning_rate = 0.0001, momentum_rate = 0.8, iterations = 100)
+x = data_read_regression('linear',100)
+brain=Network(learning_rate = 0.0001, momentum_rate = 0.8, iterations = 1000)
 brain.add(Layer(1,5,'sigmoid'))
 brain.add(Layer(5,50,'sigmoid'))
-brain.add(Layer(50,100,'sigmoid'))
-brain.add(Layer(100,1,'linear'))
+brain.add(Layer(50,1,'linear'))
 brain.train_once(x[0],x[1],x[2],x[3])
 errors = brain.train_and_evaluate(x[0],x[1],x[2],x[3])
 
@@ -68,8 +67,8 @@ plt.show()
 
 
 #### Classification
-x = data_read_classification('circles',100)
-brain = Network(learning_rate = 0.01, momentum_rate = 0.8, iterations = 100)
+x = data_read_classification('circles',10000)
+brain = Network(learning_rate = 0.001, momentum_rate = 0.8, iterations = 500)
 brain.add(Layer(2,10,'sigmoid'))
 brain.add(Layer(10,100,'sigmoid'))
 brain.add(Layer(100,50,'sigmoid'))

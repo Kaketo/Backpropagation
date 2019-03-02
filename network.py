@@ -113,7 +113,7 @@ class Network():
         
         if test_predictions.shape[1] > 1:
             train_error = sum(sum(pow(y - train_predictions,2))) / (x.shape[0] * train_predictions.shape[1])
-            test_error = sum(sum(pow(y_test - test_predictions,2))) / (x.shape[0] * test_predictions.shape[1])
+            test_error = sum(sum(pow(y_test - test_predictions,2))) / (x_test.shape[0] * test_predictions.shape[1])
         else:
             train_error = sum(pow(y.reshape(train_predictions.shape[0],1)-train_predictions,2)) / (x.shape[0] * train_predictions.shape[1])
             test_error = sum(pow(y_test.reshape(test_predictions.shape[0],1)-test_predictions,2)) / (x_test.shape[0] * test_predictions.shape[1])
