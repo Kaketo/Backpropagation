@@ -121,11 +121,35 @@ class Network():
         return [train_error, test_error]
 
     def train_and_evaluate(self, x, y, x_test, y_test):
+        """
+        Train and evaluate errors of network using whole dataset at once
+        """
         training_set_error = np.zeros(self.iterations)
         test_set_error = np.zeros(self.iterations)
         # Network training and errors calculation
         for i in range(self.iterations):
             [training_set_error[i], test_set_error[i]] = self.train_once(x, y, x_test, y_test)
+        return [training_set_error, test_set_error]
+
+    def train_mini_batch_and_evaluate(self, x, y, x_test, y_test, mini_batch_size):
+        """
+        Train and evaluate errors of network using mini batch method
+        """
+        #
+        training_set_error = np.zeros(self.iterations)
+        test_set_error = np.zeros(self.iterations)
+
+        # Network training and errors calculation
+        for i in range(self.iterations):
+            index_vector = [j for j in range(len(x))]
+            random.shuffle(index_vector)
+
+            training_data = [x[i] for i in index_vector]
+            training_answer = [y[i] for i in index_vector]
+            mini_batches_data = [training_data[k:k+mini_batch_size] for k in range(0, len(x), mini_batch_size)]
+            mini_batches_answer = [training_answer[k:k+mini_batch_size]for k in range(0, len(x), mini_batch_size)]
+            for j in range(len(mini_batches_data)):
+                [training_set_error[i], test_set_error[i]] = self.train_once(np.array(mini_batches_data[j]), np.array(mini_batches_answer[j]), x_test, y_test)
         return [training_set_error, test_set_error]
 
     def fit(self, input_vector):
