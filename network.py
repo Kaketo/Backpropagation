@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import random
 import activations
+from tqdm import tnrange, tqdm_notebook
+
 
 class Layer():
     def __init__(self, inputs, outputs, activation_func):
@@ -72,7 +74,7 @@ class Network():
         # Second step - calculate gradient of biases and weights for last layer
         self.layers[-1].gradient_biases = delta
         self.layers[-1].gradient_weights = np.dot(delta, self.layers[-2].activations.reshape(1,self.layers[-2].activations.shape[0]))
-        # Third step - calculate gradient for all other layers TO DO
+        # Third step - calculate gradient for all other layers
         for i in range(2, len(self.layers)+1):    
             activ_deriv = self.layers[-i].activation_func_derivative(self.layers[-i].outputs)
             delta = np.dot(self.layers[-i+1].weights.reshape(self.layers[-i+1].weights.shape[1],self.layers[-i+1].weights.shape[0]), delta) * activ_deriv
