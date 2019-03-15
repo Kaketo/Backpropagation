@@ -11,11 +11,18 @@ def linear(x):
 def linear_prime(x):
     return 1
 
+def softmax(x):
+    return np.exp(x)/sum(np.exp(x))
+def softmax_prime(x):
+    return np.exp(np.sum(x)) / np.sum(np.exp(x)) ** 2
+
 ACTIVATIONS = {
     "sigmoid": sigmoid,
-    "linear": linear
+    "linear": linear,
+    "softmax": softmax
 }
 ACTIVATIONS_DERIVATIVES = {
     "sigmoid": sigmoid_prime,
-    "linear": linear_prime
+    "linear": linear_prime,
+    "softmax": softmax_prime
 }

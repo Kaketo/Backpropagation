@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 import random
 import activations
-from tqdm import tnrange, tqdm_notebook
-
 
 class Layer():
     def __init__(self, inputs, outputs, activation_func):
@@ -79,7 +77,8 @@ class Network():
             activ_deriv = self.layers[-i].activation_func_derivative(self.layers[-i].outputs)
             delta = np.dot(self.layers[-i+1].weights.reshape(self.layers[-i+1].weights.shape[1],self.layers[-i+1].weights.shape[0]), delta) * activ_deriv
             self.layers[-i].gradient_biases = delta
-
+            
+            # Gradnienty dla pierwszej warstwy, kiedy nie mamy do dystpozycji self.layer[-1].outputs, a mamy x 
             if i+1 > len(self.layers):
                 self.layers[-i].gradient_weights = np.dot(delta, x.transpose())
             else:
