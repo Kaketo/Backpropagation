@@ -12,6 +12,7 @@ class Layer():
         
         self.inputs_neurons = inputs
         self.output_neurons = outputs
+        self.activation_func_name = activation_func
         self.activation_func = activations.ACTIVATIONS[activation_func]
         self.activation_func_derivative = activations.ACTIVATIONS_DERIVATIVES[activation_func]
 

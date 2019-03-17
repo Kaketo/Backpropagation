@@ -45,7 +45,9 @@ def plot_errors(errors):
     plt.plot(errors[0])
     plt.plot(errors[1])
     plt.legend(['training set error', 'test set error'], loc='upper right')
-    plt.title('Errors')
+    plt.title('Training set and test set errors')
+    plt.xlabel('Iterations (epochs)')
+    plt.ylabel('Error')
     plt.show()
 
 def plot_regression(network, data):
@@ -76,3 +78,43 @@ def plot_classification(network, data):
     plt.title('Test set')
     plt.show()
 
+def plot_classification_mesh(network, data):
+    """
+    Arguments:
+    - network must be an object of class Network
+    - data must be data given by function: data_read_classification
+    """
+    min_x = min(min(data[0][:,0]), min(data[0][:,1]))
+    max_x = max(max(data[0][:,0]), max(data[0][:,1]))
+    density = (max_x - min_x) / 1000
+    x1 = np.arange(min_x, max_x, density)
+    y1 = np.arange(min_x, max_x, density)
+    x1 = np.repeat(x1,50)
+    y1 = np.tile(y1,50)
+    data[2] = np.c_[x1,y1]
+    
+    # Plot test set
+    plt.scatter(data[2][:,0], data[2][:,1], cmap = 'Dark2',s = 35, alpha = 0.01, c = network.fit(data[2]).reshape(data[2].shape[0]))
+    # Plot training set
+    plt.scatter(data[0][:,0], data[0][:,1], cmap = 'Dark2', c = data[4])
+    plt.title('Training and test set')
+    plt.show()
+
+def test_lr(network, x, lrate , momentum = 0.9, iterations = 100):
+    """
+    Arguments:
+    - network must be an object of class Network
+    - data must be data given by function: data_read_classification
+    - lrate must be np array 
+    """
+    errors = np.zeros(len(lrate))
+    for i in range(len(lrate)):
+        brain = Network(learning_rate = lrate[i], momentum_rate = momentum, iterations = iterations)
+        for j in range(len(network.layers)):
+            brain.add(Layer(network.layers[j].inputs_neurons, network.layers[j].output_neurons, network.layers[j].activation_func_name))
+        all_errors = brain.train_and_evaluate(x[0],x[1],x[2],x[3])
+        errors[i] = all_errors[0][iterations - 1]
+    plt.plot(sorted(lrate), errors)
+    plt.xlabel('Learning Rate')
+    plt.ylabel('Error of network after ' + str(iterations) + ' iterations')
+    plt.show()
