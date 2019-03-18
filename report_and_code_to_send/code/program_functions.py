@@ -1,5 +1,3 @@
-import os
-os.chdir('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/MGUProjekt1')
 import numpy as np
 import pandas as pd
 import random
@@ -10,8 +8,8 @@ from network import Layer
 from network import Network
 
 def data_read_classification(name,size):
-    train = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.'+name+'.train.'+str(size)+'.csv')
-    test = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Classification/data.'+name+'.test.'+str(size)+'.csv')
+    train = pd.read_csv('data.'+name+'.train.'+str(size)+'.csv')
+    test = pd.read_csv('data.'+name+'.test.'+str(size)+'.csv')
     train_features = np.array(train[['x','y']])
     train_labels = np.array(train['cls'])
     test_features = np.array(test[['x','y']])
@@ -32,8 +30,8 @@ def data_read_classification(name,size):
     return [train_features, train_labels_encoded, test_features, test_labels_encoded, train_labels - 1, test_labels - 1]
 
 def data_read_regression(name,size):
-    train = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Regression/data.'+name+'.train.'+str(size)+'.csv')
-    test = pd.read_csv('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/Regression/data.'+name+'.test.'+str(size)+'.csv')
+    train = pd.read_csv('data.'+name+'.train.'+str(size)+'.csv')
+    test = pd.read_csv('data.'+name+'.test.'+str(size)+'.csv')
     train_features = np.array(train['x'])
     train_labels = np.array(train['y'])
     test_features = np.array(test['x'])

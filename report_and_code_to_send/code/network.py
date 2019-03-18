@@ -1,5 +1,4 @@
 import os
-os.chdir('C:/Users/tomas/OneDrive/Documents/Studies/PW-IAD/MGU/projekt1-implementacja_backpropagation/MGUProjekt1')
 import numpy as np
 import pandas as pd
 import random
