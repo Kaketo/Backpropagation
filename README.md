@@ -1,8 +1,8 @@
-# Metody Głębokiego Uczenia - projekt 1
+# Algorytm wstecznej propagacji
 
 Projekt polega na własnj implementacji algorytmu wstecznej propagacji błędu w perceptronie wielowarstwowym.
 
-### Główna funkcja klasy powinna obsługiwać argumenty:
+### Główna funkcja klasy Network powinna obsługiwać:
 - Liczbę warstw i neuronów ukrytych w każdej warstwie (pełne połączenia pomiędzy warstwami)
 - Funkcję aktywacji (pochodną funkcji aktywacji)
 - Liczbę iteracji
